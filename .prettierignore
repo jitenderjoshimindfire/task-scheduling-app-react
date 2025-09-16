@@ -1,0 +1,22 @@
+# Ignore build and output folders
+build/
+dist/
+coverage/
+out/
+
+# Ignore dependency directories
+node_modules/
+
+# Ignore lock files or package manager files if not formatted
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore miscellaneous or generated files
+*.min.js
+*.bundle.js
+*.log
+
+# Ignore config files you don’t want formatted (optional)
+*.config.js
+*.config.cjs
