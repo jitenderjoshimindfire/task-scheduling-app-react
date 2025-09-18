@@ -3,8 +3,8 @@ import React, { Suspense } from "react";
 import Home from "../pages/Home";
 import Header from "../pages/Header";
 import Footer from "../pages/Footer";
-import Signup from "../pages/Signup";
-import Login from "../pages/Login";
+import Signup from "../pages/signup/Signup";
+import Login from "../pages/login/Login";
 
 const MainLayout = () => {
   return (
@@ -27,20 +27,20 @@ const MainLayout = () => {
 };
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <MainLayout/>,
-        children:[
-            {index:true, element: <Home/>},
-            {path: 'login', element: <Login/>},
-            {path: 'signup', element: <Signup/>}
-        ]
-    }
-])
-
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "login", element: <Login /> },
+      { path: "signup", element: <Signup /> },
+      { path: "home", element: <Home /> },
+    ],
+  },
+]);
 
 const AppRouter = () => {
-    return <RouterProvider router={router}/>
-}
+  return <RouterProvider router={router} />;
+};
 
 export default AppRouter;
