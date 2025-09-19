@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import React, { Suspense } from "react";
-import Home from "../pages/Home";
+import Home from "../pages/home/Home";
 import Header from "../pages/Header";
 import Footer from "../pages/Footer";
 import Signup from "../pages/signup/Signup";

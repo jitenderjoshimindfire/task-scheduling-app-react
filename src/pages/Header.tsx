@@ -1,11 +1,55 @@
-import React from 'react'
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, selectUser } from "../redux-toolkit/authSlice";
+import { AppDispatch } from "../redux-toolkit/store";
 
-const Header = () => {
+const Header: React.FC = () => {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate("/login");
+  };
+
   return (
-    <div>
-        Header
-    </div>
-  )
-}
+    <nav className="bg-black text-white px-6 py-4 flex justify-between items-center">
+      <div
+        className="font-bold text-xl cursor-pointer"
+        onClick={() => navigate("/home")}
+      >
+        TaskSchedulingApp
+      </div>
 
-export default Header
+      <div className="space-x-4">
+        <Link to="/home" className="hover:text-gray-300 transition">
+          Tasks
+        </Link>
+
+        {!user && (
+          <>
+            <Link to="/register" className="hover:text-gray-300 transition">
+              Signup
+            </Link>
+            <Link to="/login" className="hover:text-gray-300 transition">
+              Login
+            </Link>
+          </>
+        )}
+
+        {user && (
+          <button
+            onClick={handleLogout}
+            className="hover:text-gray-300 transition"
+          >
+            Sign Out
+          </button>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Header;

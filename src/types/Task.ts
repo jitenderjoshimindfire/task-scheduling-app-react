@@ -11,6 +11,7 @@ export interface CreateTaskRequest {
   title: string;
   description: string;
   dueDate: string; 
+  creator: string
 }
 
 export interface UpdateTaskRequest {
