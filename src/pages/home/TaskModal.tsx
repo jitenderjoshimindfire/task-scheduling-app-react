@@ -6,7 +6,7 @@ interface TaskModalProps {
   onClose: () => void;
   onSubmit: (
     task: Omit<Task, "_id" | "createdAt" | "creator">,
-    taskId?: string,
+    taskId?: string
   ) => void;
   initialData?: Task | null;
 }
@@ -22,21 +22,32 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [dueDate, setDueDate] = useState("");
 
   useEffect(() => {
-    if (initialData) {
-      setTitle(initialData.title);
-      setDescription(initialData.description);
-      setDueDate(initialData.dueDate.split("T")[0]);
-    } else {
-      setTitle("");
-      setDescription("");
-      setDueDate("");
+    if (isOpen) {
+      if (initialData) {
+        setTitle(initialData.title);
+        setDescription(initialData.description);
+        setDueDate(initialData.dueDate.split("T")[0]);
+      } else {
+        resetForm();
+      }
     }
-  }, [initialData]);
+  }, [isOpen, initialData]);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setDueDate("");
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({ title, description, dueDate }, initialData?._id);
-    onClose();
+    handleClose();
   };
 
   if (!isOpen) return null;
@@ -73,7 +84,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
           <div className="flex justify-end space-x-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-4 py-2 border rounded hover:bg-gray-100"
             >
               Cancel
