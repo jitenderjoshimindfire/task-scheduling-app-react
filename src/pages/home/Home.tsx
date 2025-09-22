@@ -11,6 +11,8 @@ import {
 } from "../../services/taskServices";
 import TaskModal from "./TaskModal";
 import { RootState } from "../../redux-toolkit/store";
+import { io } from "socket.io-client";
+const socket = io(process.env.REACT_APP_BASE_URL);
 
 const Home: React.FC = () => {
   const user = useSelector(selectUser);
@@ -38,11 +40,34 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!token || !user) return;
+
     fetchTasks();
-  }, [user, token]);
+
+    socket.on("taskUpdate", (updatedTasks: Task[]) => {
+      const userTasks = updatedTasks.filter(
+        (task: Task) => task.creator === user._id,
+      );
+      setTasks(userTasks);
+      userTasks.forEach((task) => {
+        if (task.isOverdue) {
+          toast.error(`Task "${task.title}" is overdue!`);
+        } else if (task.dueSoon) {
+          toast.warn(`Task "${task.title}" is due within 24 hours`);
+        }
+      });
+    });
+
+    return () => {
+      socket.off("taskUpdate");
+    };
+  }, [token, user]);
 
   const handleSubmit = async (
-    taskData: Omit<Task, "_id" | "createdAt" | "creator">,
+    taskData: Omit<
+      Task,
+      "_id" | "createdAt" | "creator" | "dueSoon" | "isOverdue"
+    >,
     taskId?: string,
   ) => {
     if (!token) return;
@@ -95,13 +120,19 @@ const Home: React.FC = () => {
           {tasks.map((task) => (
             <div
               key={task._id}
-              className="flex flex-col md:flex-row justify-between items-start md:items-center border rounded p-4 shadow-sm"
+              className={`flex flex-col md:flex-row justify-between items-start md:items-center border rounded p-4 shadow-sm ${
+                task.isOverdue
+                  ? "border-red-500 bg-red-50"
+                  : task.dueSoon
+                    ? "border-yellow-400 bg-yellow-50"
+                    : "border-gray-200"
+              }`}
             >
               <div>
                 <h2 className="text-lg font-semibold">{task.title}</h2>
                 <p className="text-gray-700">{task.description}</p>
                 <p className="text-sm text-gray-500">
-                  Created: {new Date(task.createdAt).toLocaleDateString()} |
+                  Created: {new Date(task.createdAt).toLocaleDateString()} |{" "}
                   Due: {new Date(task.dueDate).toLocaleDateString()}
                 </p>
               </div>

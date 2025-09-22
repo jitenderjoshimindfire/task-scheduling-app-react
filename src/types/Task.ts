@@ -4,7 +4,9 @@ export interface Task {
   description: string;
   dueDate: string;    
   createdAt: string;    
-  creator: string;      
+  creator: string;     
+  isOverdue: Boolean;
+  dueSoon: Boolean 
 }
 
 export interface CreateTaskRequest {

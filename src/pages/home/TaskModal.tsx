@@ -5,7 +5,7 @@ interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
-    task: Omit<Task, "_id" | "createdAt" | "creator">,
+    task: Omit<Task, "_id" | "createdAt" | "creator" | "dueSoon" | "isOverdue">,
     taskId?: string
   ) => void;
   initialData?: Task | null;
