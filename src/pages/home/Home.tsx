@@ -27,7 +27,6 @@ const Home: React.FC = () => {
     try {
       setLoading(true);
       const response = await getAllTasks(token);
-      console.log(response.data);
       const userTasks = response.data?.filter(
         (task: Task) => task.creator === user?._id,
       );
@@ -72,11 +71,19 @@ const Home: React.FC = () => {
   ) => {
     if (!token) return;
     try {
+      const dueDateWithTime = new Date(taskData.dueDate).toISOString();
+
+      const payload = {
+        ...taskData,
+        dueDate: dueDateWithTime,
+        creator: user?._id || "",
+      };
+
       if (taskId) {
-        await updateTask(taskId, taskData, token);
+        await updateTask(taskId, payload, token);
         toast.success("Task updated successfully");
       } else {
-        await createTask({ ...taskData, creator: user?._id || "" }, token);
+        await createTask(payload, token);
         toast.success("Task created successfully");
       }
       fetchTasks();
@@ -124,16 +131,17 @@ const Home: React.FC = () => {
                 task.isOverdue
                   ? "border-red-500 bg-red-50"
                   : task.dueSoon
-                    ? "border-yellow-400 bg-yellow-50"
-                    : "border-gray-200"
+                  ? "border-yellow-400 bg-yellow-50"
+                  : "border-gray-200"
               }`}
             >
               <div>
                 <h2 className="text-lg font-semibold">{task.title}</h2>
                 <p className="text-gray-700">{task.description}</p>
                 <p className="text-sm text-gray-500">
-                  Created: {new Date(task.createdAt).toLocaleDateString()} |{" "}
-                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                  Created: {new Date(task.dueDate).toISOString().substring(0, 10)} |{" "}
+                  Due: {new Date(task.dueDate).toISOString().substring(0, 10)}
+
                 </p>
               </div>
               <div className="flex space-x-2 mt-3 md:mt-0">

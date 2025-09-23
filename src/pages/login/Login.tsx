@@ -27,7 +27,6 @@ const Login: React.FC = () => {
   }, [authState.user, authState.accessToken, navigate]);
 
   useEffect(() => {
-    console.log(authState);
     if (authState.error) {
       toast.error(authState.error);
     }
