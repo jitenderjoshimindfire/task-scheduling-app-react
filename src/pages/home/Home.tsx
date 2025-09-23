@@ -131,18 +131,28 @@ const Home: React.FC = () => {
                 task.isOverdue
                   ? "border-red-500 bg-red-50"
                   : task.dueSoon
-                  ? "border-yellow-400 bg-yellow-50"
-                  : "border-gray-200"
+                    ? "border-yellow-400 bg-yellow-50"
+                    : "border-gray-200"
               }`}
             >
               <div>
                 <h2 className="text-lg font-semibold">{task.title}</h2>
                 <p className="text-gray-700">{task.description}</p>
                 <p className="text-sm text-gray-500">
-                  Created: {new Date(task.dueDate).toISOString().substring(0, 10)} |{" "}
+                  Created:{" "}
+                  {new Date(task.createdAt).toISOString().substring(0, 10)} |{" "}
                   Due: {new Date(task.dueDate).toISOString().substring(0, 10)}
-
                 </p>
+                {task.isOverdue && (
+                  <p className="mt-2 text-sm font-semibold text-red-800">
+                    This task is overdue!
+                  </p>
+                )}
+                {!task.isOverdue && task.dueSoon && (
+                  <p className="mt-2 text-sm font-semibold text-yellow-700">
+                    Due within 24 hours!
+                  </p>
+                )}
               </div>
               <div className="flex space-x-2 mt-3 md:mt-0">
                 <button
