@@ -39,7 +39,7 @@ const Header: React.FC = () => {
 
         {!user && (
           <>
-            <Link to="/register" className="hover:text-gray-300 transition">
+            <Link to="/signup" className="hover:text-gray-300 transition">
               Signup
             </Link>
             <Link to="/login" className="hover:text-gray-300 transition">
