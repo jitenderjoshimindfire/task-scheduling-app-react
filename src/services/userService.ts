@@ -8,6 +8,22 @@ export const registerUser = async (data: Omit<User, "_id">): Promise<User> => {
 };
 
 export const loginUser = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await axios.post<LoginResponse>(`${USER_API}/login`, data);
+  const response = await axios.post<LoginResponse>(`${USER_API}/login`, data, {
+    withCredentials: true,
+  });
   return response.data;
+};
+
+export const refreshToken = async (): Promise<{ accessToken: string }> => {
+  const response = await axios.post(
+    `${USER_API}/refresh`,
+    {},
+    { withCredentials: true },
+  );
+
+  return response.data;
+};
+
+export const logoutUser = async () => {
+  await axios.post(`${USER_API}/logout`, {}, { withCredentials: true });
 };

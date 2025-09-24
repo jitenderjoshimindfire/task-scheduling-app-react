@@ -12,8 +12,6 @@ import {
 import TaskModal from "./TaskModal";
 import { RootState } from "../../redux-toolkit/store";
 import { io } from "socket.io-client";
-import { useNavigate } from "react-router-dom";
-
 const socket = io(process.env.REACT_APP_BASE_URL);
 
 const Home: React.FC = () => {
@@ -23,15 +21,6 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
-  const navigate = useNavigate();
-
-  const handleAuthError = (err: any, defaultMessage: string) => {
-    if (err?.response?.status === 403) {
-      navigate("/login");
-    } else {
-      toast.error(defaultMessage);
-    }
-  };
 
   const fetchTasks = async () => {
     if (!token) return;
@@ -42,8 +31,8 @@ const Home: React.FC = () => {
         (task: Task) => task.creator === user?._id,
       );
       if (userTasks) setTasks(userTasks);
-    } catch (err: any) {
-      handleAuthError(err, "Failed to fetch tasks");
+    } catch (err) {
+      toast.error("Failed to fetch tasks");
     } finally {
       setLoading(false);
     }
@@ -98,8 +87,8 @@ const Home: React.FC = () => {
         toast.success("Task created successfully");
       }
       fetchTasks();
-    } catch (err: any) {
-      handleAuthError(err, "Failed to save task");
+    } catch {
+      toast.error("Failed to save task");
     }
   };
 
@@ -109,8 +98,8 @@ const Home: React.FC = () => {
       await deleteTask(id, token);
       toast.success("Task deleted successfully");
       fetchTasks();
-    } catch (err: any) {
-      handleAuthError(err, "Failed to delete task");
+    } catch {
+      toast.error("Failed to delete task");
     }
   };
 
