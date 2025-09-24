@@ -6,7 +6,7 @@ interface TaskModalProps {
   onClose: () => void;
   onSubmit: (
     task: Omit<Task, "_id" | "createdAt" | "creator" | "dueSoon" | "isOverdue">,
-    taskId?: string
+    taskId?: string,
   ) => void;
   initialData?: Task | null;
 }
@@ -20,6 +20,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [status, setStatus] = useState<"inprogress" | "complete">("inprogress");
 
   useEffect(() => {
     if (isOpen) {
@@ -27,6 +28,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
         setTitle(initialData.title);
         setDescription(initialData.description);
         setDueDate(initialData.dueDate.split("T")[0]);
+        setStatus(
+          initialData.status === "complete" ? "complete" : "inprogress",
+        );
       } else {
         resetForm();
       }
@@ -37,6 +41,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     setTitle("");
     setDescription("");
     setDueDate("");
+    setStatus("inprogress");
   };
 
   const handleClose = () => {
@@ -46,7 +51,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, description, dueDate }, initialData?._id);
+    onSubmit({ title, description, dueDate, status }, initialData?._id);
     handleClose();
   };
 
@@ -81,6 +86,18 @@ const TaskModal: React.FC<TaskModalProps> = ({
             className="w-full border rounded px-3 py-2"
             required
           />
+          <select
+            value={status}
+            onChange={(e) =>
+              setStatus(e.target.value as "inprogress" | "complete")
+            }
+            className="w-full border rounded px-3 py-2"
+            required
+          >
+            <option value="inprogress">In Progress</option>
+            <option value="complete">Completed</option>
+          </select>
+
           <div className="flex justify-end space-x-3">
             <button
               type="button"

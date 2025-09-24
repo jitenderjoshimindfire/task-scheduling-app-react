@@ -103,6 +103,22 @@ const Home: React.FC = () => {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "complete":
+        return {
+          text: "Completed",
+          className: "bg-green-200 text-green-800",
+        };
+      case "inprogress":
+      default:
+        return {
+          text: "In Progress",
+          className: "bg-gray-300 text-gray-900",
+        };
+    }
+  };
+
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-6">
@@ -124,55 +140,75 @@ const Home: React.FC = () => {
         <p>No tasks found. Add one!</p>
       ) : (
         <div className="space-y-4">
-          {tasks.map((task) => (
-            <div
-              key={task._id}
-              className={`flex flex-col md:flex-row justify-between items-start md:items-center border rounded p-4 shadow-sm ${
-                task.isOverdue
-                  ? "border-red-500 bg-red-50"
-                  : task.dueSoon
-                    ? "border-yellow-400 bg-yellow-50"
-                    : "border-gray-200"
-              }`}
-            >
-              <div>
-                <h2 className="text-lg font-semibold">{task.title}</h2>
-                <p className="text-gray-700">{task.description}</p>
-                <p className="text-sm text-gray-500">
-                  Created:{" "}
-                  {new Date(task.createdAt).toISOString().substring(0, 10)} |{" "}
-                  Due: {new Date(task.dueDate).toISOString().substring(0, 10)}
-                </p>
-                {task.isOverdue && (
-                  <p className="mt-2 text-sm font-semibold text-red-800">
-                    This task is overdue!
+          {tasks.map((task) => {
+            const badge = getStatusBadge(task.status);
+
+            let cardClasses =
+              "flex flex-col md:flex-row justify-between items-start md:items-center border rounded p-4 shadow-sm ";
+            if (task.status === "complete") {
+              cardClasses += "bg-gray-800 border-gray-700 text-white"; // completed task styling
+            } else if (task.isOverdue) {
+              cardClasses += "border-red-500 bg-red-50";
+            } else if (task.dueSoon) {
+              cardClasses += "border-yellow-400 bg-yellow-50";
+            } else {
+              cardClasses += "border-gray-200 bg-white";
+            }
+
+            return (
+              <div key={task._id} className={cardClasses}>
+                <div>
+                  <h2 className="text-lg font-semibold">{task.title}</h2>
+                  <p
+                    className={`${task.status === "complete" ? "text-gray-200" : "text-gray-700"}`}
+                  >
+                    {task.description}
                   </p>
-                )}
-                {!task.isOverdue && task.dueSoon && (
-                  <p className="mt-2 text-sm font-semibold text-yellow-700">
-                    Due within 24 hours!
+                  <p
+                    className={`text-sm ${task.status === "complete" ? "text-gray-300" : "text-gray-500"}`}
+                  >
+                    Created:{" "}
+                    {new Date(task.createdAt).toISOString().substring(0, 10)} |{" "}
+                    Due: {new Date(task.dueDate).toISOString().substring(0, 10)}
                   </p>
-                )}
+                  {task.status !== "complete" && task.isOverdue && (
+                    <p className="mt-2 text-sm font-semibold text-red-800">
+                      This task is overdue!
+                    </p>
+                  )}
+                  {task.status !== "complete" &&
+                    !task.isOverdue &&
+                    task.dueSoon && (
+                      <p className="mt-2 text-sm font-semibold text-yellow-700">
+                        Due within 24 hours!
+                      </p>
+                    )}
+                </div>
+                <div className="flex space-x-2 mt-3 md:mt-0">
+                  <span
+                    className={`${badge.className} rounded-full px-3 py-1 text-sm font-medium`}
+                  >
+                    {badge.text}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setEditTask(task);
+                      setModalOpen(true);
+                    }}
+                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(task._id)}
+                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="flex space-x-2 mt-3 md:mt-0">
-                <button
-                  onClick={() => {
-                    setEditTask(task);
-                    setModalOpen(true);
-                  }}
-                  className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(task._id)}
-                  className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
